@@ -14,13 +14,13 @@ interface UniversityOperations {
     void displayCourses();
 }
 
-class Student1 {
+class Student {
     int id;
     String name;
     String course;
     int marks;
 
-    Student1(int id, String name, String course, int marks) {
+    Student(int id, String name, String course, int marks) {
         this.id = id;
         this.name = name;
         this.course = course;
@@ -141,7 +141,7 @@ public class UniversityMenu implements UniversityOperations {
         System.out.print("Enter Marks: ");
         int marks = sc.nextInt();
 
-        Student s = new Student1(id, name, course, marks);
+        Student s = new Student(id, name, course, marks);
 
         arrList.add(s);
         vec.add(s);
