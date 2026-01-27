@@ -3,6 +3,7 @@ package Assignment2;
 import java.util.*;
 import java.util.regex.Pattern;
 
+/* Interface */
 interface UniversityOperations {
     void addStudent();
     void displayStudents();
@@ -14,24 +15,27 @@ interface UniversityOperations {
     void displayCourses();
 }
 
+/* Student Class */
 class Student {
     int id;
     String name;
     String course;
     int marks;
 
-    Student(int id, String name, String course, int marks) {
+    public Student(int id, String name, String course, int marks) {
         this.id = id;
         this.name = name;
         this.course = course;
         this.marks = marks;
     }
 
+    @Override
     public String toString() {
         return id + "  " + name + "  " + course + "  " + marks;
     }
 }
 
+/* Main Class */
 public class UniversityMenu implements UniversityOperations {
 
     List<Student> arrList = new ArrayList<>();
@@ -46,16 +50,14 @@ public class UniversityMenu implements UniversityOperations {
 
     Scanner sc = new Scanner(System.in);
 
-    static String NAME_REGEX = "^[A-Za-z ]+$";
-    static String COURSE_REGEX = "^[A-Za-z ]+$";
+    static final String NAME_REGEX = "^[A-Za-z ]+$";
+    static final String COURSE_REGEX = "^[A-Za-z ]+$";
 
     public static void main(String[] args) {
-
         UniversityMenu obj = new UniversityMenu();
-        int n;
 
-        try {
-            while (true) {
+        while (true) {
+            try {
                 System.out.println("\n------ University Menu ------");
                 System.out.println("1. Add Student");
                 System.out.println("2. Display Students");
@@ -68,48 +70,38 @@ public class UniversityMenu implements UniversityOperations {
                 System.out.println("9. Exit");
                 System.out.print("Enter choice: ");
 
-                n = obj.sc.nextInt();
+                int choice = obj.sc.nextInt();
 
-                switch (n) {
-                    case 1:
-                        obj.addStudent();
-                        break;
-                    case 2:
-                        obj.displayStudents();
-                        break;
-                    case 3:
+                switch (choice) {
+                    case 1 -> obj.addStudent();
+                    case 2 -> obj.displayStudents();
+                    case 3 -> {
                         System.out.print("Enter ID: ");
                         obj.removeStudent(obj.sc.nextInt());
-                        break;
-                    case 4:
+                    }
+                    case 4 -> {
                         System.out.print("Enter ID: ");
                         obj.searchStudent(obj.sc.nextInt());
-                        break;
-                    case 5:
-                        obj.sortByMarks();
-                        break;
-                    case 6:
-                        obj.convertHashMapToTreeMap();
-                        break;
-                    case 7:
-                        obj.countStudentsCourseWise();
-                        break;
-                    case 8:
-                        obj.displayCourses();
-                        break;
-                    case 9:
+                    }
+                    case 5 -> obj.sortByMarks();
+                    case 6 -> obj.convertHashMapToTreeMap();
+                    case 7 -> obj.countStudentsCourseWise();
+                    case 8 -> obj.displayCourses();
+                    case 9 -> {
                         System.out.println("Program Ended");
                         obj.sc.close();
                         return;
-                    default:
-                        System.out.println("Invalid Choice");
+                    }
+                    default -> System.out.println("Invalid Choice");
                 }
+            } catch (InputMismatchException e) {
+                System.out.println("Invalid Input! Please enter numbers only.");
+                obj.sc.nextLine();
             }
-        } catch (Exception e) {
-            System.out.println("Exception: Invalid Input");
         }
     }
 
+    @Override
     public void addStudent() {
         sc.nextLine();
 
@@ -124,7 +116,6 @@ public class UniversityMenu implements UniversityOperations {
 
         System.out.print("Enter Name: ");
         String name = sc.nextLine();
-
         if (!Pattern.matches(NAME_REGEX, name)) {
             System.out.println("Invalid Name");
             return;
@@ -132,7 +123,6 @@ public class UniversityMenu implements UniversityOperations {
 
         System.out.print("Enter Course: ");
         String course = sc.nextLine();
-
         if (!Pattern.matches(COURSE_REGEX, course)) {
             System.out.println("Invalid Course Name");
             return;
@@ -146,28 +136,25 @@ public class UniversityMenu implements UniversityOperations {
         arrList.add(s);
         vec.add(s);
         stk.push(s);
-
         hmap.put(id, s);
         htable.put(id, s);
-
         courseSet.add(course);
 
-        System.out.println("Student Added");
+        System.out.println("Student Added Successfully");
     }
 
+    @Override
     public void displayStudents() {
         if (arrList.isEmpty()) {
-            System.out.println("No Records");
+            System.out.println("No Records Found");
             return;
         }
-
-        for (Student s : arrList)
-            System.out.println(s);
+        arrList.forEach(System.out::println);
     }
 
+    @Override
     public void removeStudent(int id) {
         Student s = hmap.remove(id);
-
         if (s != null) {
             htable.remove(id);
             arrList.remove(s);
@@ -179,42 +166,39 @@ public class UniversityMenu implements UniversityOperations {
         }
     }
 
+    @Override
     public void searchStudent(int id) {
         Student s = hmap.get(id);
-        if (s != null)
-            System.out.println("Found: " + s);
-        else
-            System.out.println("Student Not Found");
+        System.out.println(s != null ? "Found: " + s : "Student Not Found");
     }
 
+    @Override
     public void sortByMarks() {
         arrList.sort(Comparator.comparingInt(st -> st.marks));
-        System.out.println("Students Sorted by Marks");
+        System.out.println("Students Sorted by Marks:");
         displayStudents();
     }
 
+    @Override
     public void convertHashMapToTreeMap() {
         tmap.clear();
         tmap.putAll(hmap);
-        System.out.println("HashMap Converted to TreeMap");
-        for (Student s : tmap.values())
-            System.out.println(s);
+        System.out.println("HashMap Converted to TreeMap:");
+        tmap.values().forEach(System.out::println);
     }
 
+    @Override
     public void countStudentsCourseWise() {
         HashMap<String, Integer> countMap = new HashMap<>();
-
         for (Student s : arrList) {
             countMap.put(s.course, countMap.getOrDefault(s.course, 0) + 1);
         }
-
-        for (Map.Entry<String, Integer> e : countMap.entrySet())
-            System.out.println(e.getKey() + " : " + e.getValue());
+        countMap.forEach((k, v) -> System.out.println(k + " : " + v));
     }
 
+    @Override
     public void displayCourses() {
         System.out.println("Courses:");
-        for (String c : courseSet)
-            System.out.println(c);
+        courseSet.forEach(System.out::println);
     }
 }
